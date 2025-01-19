@@ -33,25 +33,30 @@ jobs:
       with:
         pixi-version: v0.39.5
         run-install: false
-        manifest-path: .github/workflows/numpy.pixi.toml
+        cache: true
       # Read the requirements files removing comments (and the resulting empty lines) and adding quotes around each
       # line (for use with zsh)
+    - run: pixi run test
     - name: Install dependencies
       run: |
+        pixi add python=3.11 tectonic doxygen
         pixi add --pypi $(cat numpy/requirements/build_requirements.txt | sed '/^#/d'| sed -r '/^\s*$/d' | sed 's/\(.*\)/"\1"/g')
         pixi add --pypi $(cat numpy/requirements/doc_requirements.txt | sed '/^#/d'| sed -r '/^\s*$/d' | sed 's/\(.*\)/"\1"/g')
+      shell: pixi exec -- bash -e {0}
 
     - name: Build NumPy + LaTeX docs
       run: |
         cd numpy
-        pixi run spin docs generate
+        spin docs generate
         mkdir -p doc/build/doctrees
-        pushd doc; pixi run python preprocess.py; popd
+        pushd doc; python preprocess.py; popd
         doxygen doc/build/doxygen/Doxyfile
-        pixi run spin docs latex
+        spin docs latex
+      shell: pixi run bash -e {0}
 
     - name: Build PDF
       run: |
         cd numpy/doc/build/latex
-        pixi run tectonic numpy-ref.tex
-        pixi run tectonic numpy-user.tex
+        tectonic numpy-ref.tex
+        tectonic numpy-user.tex
+      shell: pixi run bash -e {0}
