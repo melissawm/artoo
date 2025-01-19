@@ -55,3 +55,12 @@ jobs:
         cd numpy/doc/build/latex
         pixi run tectonic numpy-ref.tex
         pixi run tectonic numpy-user.tex
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: pdf-docs.zip
+        path: |
+          numpy/doc/build/latex/numpy-ref.pdf
+          numpy/doc/build/latex/numpy-user.pdf
+        retention-days: 7
+        overwrite: 'true'
