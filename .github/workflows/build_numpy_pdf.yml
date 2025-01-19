@@ -38,7 +38,7 @@ jobs:
     - name: Install dependencies
       run: |
         pixi init numpy-dev
-        popd numpy-dev; pixi shell; pushd
+        pushd numpy-dev; pixi shell; popd
         pixi add python=3.11 tectonic doxygen
         pixi add --pypi $(cat numpy/requirements/build_requirements.txt | sed '/^#/d'| sed -r '/^\s*$/d' | sed 's/\(.*\)/"\1"/g')
         pixi add --pypi $(cat numpy/requirements/doc_requirements.txt | sed '/^#/d'| sed -r '/^\s*$/d' | sed 's/\(.*\)/"\1"/g')
