@@ -1,0 +1,2 @@
+# artoo
+Personal automations.
