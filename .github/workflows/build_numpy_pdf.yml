@@ -33,14 +33,12 @@ jobs:
       with:
         pixi-version: v0.39.5
         run-install: false
+        manifest-path: numpy.pixi.toml
       # Read the requirements files removing comments (and the resulting empty lines) and adding quotes around each
       # line (for use with zsh)
     - run: |
-        pixi init numpy-dev
-        pushd numpy-dev; pixi shell; popd
-        pixi add python=3.11 tectonic doxygen
-        pixi add --pypi $(cat requirements/build_requirements.txt | sed '/^#/d'| sed -r '/^\s*$/d' | sed 's/\(.*\)/"\1"/g')
-        pixi add --pypi $(cat requirements/doc_requirements.txt | sed '/^#/d'| sed -r '/^\s*$/d' | sed 's/\(.*\)/"\1"/g')
+        pixi add --pypi $(cat numpy/requirements/build_requirements.txt | sed '/^#/d'| sed -r '/^\s*$/d' | sed 's/\(.*\)/"\1"/g')
+        pixi add --pypi $(cat numpy/requirements/doc_requirements.txt | sed '/^#/d'| sed -r '/^\s*$/d' | sed 's/\(.*\)/"\1"/g')
 
     - name: Build NumPy + LaTeX docs
       run: |
