@@ -33,7 +33,7 @@ jobs:
       with:
         pixi-version: v0.39.5
         run-install: false
-        manifest-path: numpy.pixi.toml
+        manifest-path: .github/workflows/numpy.pixi.toml
       # Read the requirements files removing comments (and the resulting empty lines) and adding quotes around each
       # line (for use with zsh)
     - name: Install dependencies
