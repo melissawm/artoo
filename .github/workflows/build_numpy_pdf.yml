@@ -1,0 +1,58 @@
+# This is a manually triggered workflow that generates new PDF builds of the
+# NumPy documentation for each minor release.
+
+name: Build PDF for NumPy documentation
+
+on:
+  workflow_dispatch:
+    inputs:
+      numpy_version:
+        description: 'Name of the NumPy release'
+        required: true
+        default: 'v2.0.0'
+
+permissions:
+  contents: read
+
+jobs:
+  pdf-docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: numpy/numpy
+        path: numpy
+        ref: ${{ inputs.numpy_version }}
+        submodules: recursive
+        fetch-depth: 0
+        fetch-tags: true
+        persist-credentials: false
+        token: ${{ secrets.WORKFLOW_PAT }}
+
+    - uses: prefix-dev/setup-pixi@v0.8.1
+      with:
+        pixi-version: v0.39.5
+        run-install: false
+      # Read the requirements files removing comments (and the resulting empty lines) and adding quotes around each
+      # line (for use with zsh)
+    - run: |
+        pixi init numpy-dev
+        pushd numpy-dev; pixi shell; popd
+        pixi add python=3.11 tectonic doxygen
+        pixi add --pypi $(cat requirements/build_requirements.txt | sed '/^#/d'| sed -r '/^\s*$/d' | sed 's/\(.*\)/"\1"/g')
+        pixi add --pypi $(cat requirements/doc_requirements.txt | sed '/^#/d'| sed -r '/^\s*$/d' | sed 's/\(.*\)/"\1"/g')
+
+    - name: Build NumPy + LaTeX docs
+      run: |
+        cd numpy
+        pixi run spin docs generate
+        mkdir -p doc/build/doctrees
+        pushd doc; pixi run python preprocess.py; popd
+        doxygen doc/build/doxygen/Doxyfile
+        pixi run spin docs latex
+
+    - name: Build PDF
+      run: |
+        cd numpy/doc/build/latex
+        pixi run tectonic numpy-ref.tex
+        pixi run tectonic numpy-user.tex
