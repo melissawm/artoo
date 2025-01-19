@@ -47,7 +47,7 @@ jobs:
         pixi run spin docs generate
         mkdir -p doc/build/doctrees
         pushd doc; pixi run python preprocess.py; popd
-        doxygen doc/build/doxygen/Doxyfile
+        pixi run doxygen doc/build/doxygen/Doxyfile
         pixi run spin docs latex
 
     - name: Build PDF
