@@ -33,7 +33,6 @@ jobs:
       with:
         pixi-version: v0.39.5
         run-install: false
-        cache: true
       # Read the requirements files removing comments (and the resulting empty lines) and adding quotes around each
       # line (for use with zsh)
     - run: pixi run test
