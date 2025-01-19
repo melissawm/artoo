@@ -35,30 +35,26 @@ jobs:
         run-install: false
       # Read the requirements files removing comments (and the resulting empty lines) and adding quotes around each
       # line (for use with zsh)
-    - run: |
-        pixi init numpy-dev
-        cd numpy-dev
-        pixi shell
     - name: Install dependencies
       run: |
+        pixi init numpy-dev
+        popd numpy-dev; pixi shell; pushd
         pixi add python=3.11 tectonic doxygen
         pixi add --pypi $(cat numpy/requirements/build_requirements.txt | sed '/^#/d'| sed -r '/^\s*$/d' | sed 's/\(.*\)/"\1"/g')
         pixi add --pypi $(cat numpy/requirements/doc_requirements.txt | sed '/^#/d'| sed -r '/^\s*$/d' | sed 's/\(.*\)/"\1"/g')
-      shell: pixi run {0}
+      shell: bash
 
     - name: Build NumPy + LaTeX docs
       run: |
         cd numpy
-        spin docs generate
+        pixi run spin docs generate
         mkdir -p doc/build/doctrees
-        pushd doc; python preprocess.py; popd
+        pushd doc; pixi run python preprocess.py; popd
         doxygen doc/build/doxygen/Doxyfile
-        spin docs latex
-      shell: pixi run {0}
+        pixi run spin docs latex
 
     - name: Build PDF
       run: |
         cd numpy/doc/build/latex
-        tectonic numpy-ref.tex
-        tectonic numpy-user.tex
-      shell: pixi run {0}
+        pixi run tectonic numpy-ref.tex
+        pixi run tectonic numpy-user.tex
