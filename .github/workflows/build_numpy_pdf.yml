@@ -38,6 +38,7 @@ jobs:
     - run: pixi run test
     - name: Install dependencies
       run: |
+        pixi init
         pixi add python=3.11 tectonic doxygen
         pixi add --pypi $(cat numpy/requirements/build_requirements.txt | sed '/^#/d'| sed -r '/^\s*$/d' | sed 's/\(.*\)/"\1"/g')
         pixi add --pypi $(cat numpy/requirements/doc_requirements.txt | sed '/^#/d'| sed -r '/^\s*$/d' | sed 's/\(.*\)/"\1"/g')
