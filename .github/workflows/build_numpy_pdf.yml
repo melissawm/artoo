@@ -33,14 +33,12 @@ jobs:
       with:
         pixi-version: v0.39.5
         run-install: false
-      # Read the requirements files removing comments (and the resulting empty lines) and adding quotes around each
-      # line (for use with zsh)
     - name: Install dependencies
       run: |
         pixi init
         pixi add python=3.11 tectonic
         pixi add "meson-python>=0.13.1" "Cython>=3.0.6" ninja "spin==0.13" python-build
-        pixi add doxygen "sphinx==7.2.6" "numpydoc==1.4" "pydata-sphinx-theme>=0.15.2" sphinx-copybutton sphinx-design scipy matplotlib pandas "breathe>4.33.0" "ipython!=8.1.0" pickleshare towncrier toml
+        pixi add doxygen "sphinx==7.2.6" "numpydoc==1.4" "pydata-sphinx-theme>=0.15.2" sphinx-copybutton sphinx-design scipy matplotlib pandas "breathe>4.33.0" "ipython!=8.1.0" pickleshare towncrier toml "scipy-doctest>=1.8.0" "jupyterlite-sphinx>=0.18.0" "jupyterlite-pyodide-kernel==0.5.2"
       shell: bash
 
     - name: Build NumPy + LaTeX docs
