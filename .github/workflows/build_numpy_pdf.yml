@@ -35,6 +35,7 @@ jobs:
         run-install: false
     - name: Install dependencies
       run: |
+        sudo apt-get update && sudo apt-get install imagemagick
         pixi init
         pixi add python=3.11 tectonic
         pixi add "meson-python>=0.13.1" "Cython>=3.0.6" ninja "spin==0.13" python-build
